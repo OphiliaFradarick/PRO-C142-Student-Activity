@@ -43,14 +43,9 @@ def liked_movie():
         "status": "success"
     })
 
-@app.route('/liked')
-def liked():
-    global liked_movies    
+# api to return list of liked movies
 
-    return jsonify({
-        'data' : liked_movies , 
-        'status' : 'success'
-    })
+
 
 @app.route("/dislike")
 def unliked_movie():
@@ -78,53 +73,14 @@ def did_not_watch_view():
         "status": "success"
     })
 
-@app.route("/popular_movies")
-def popular_movies():
-    popular_movie_data = []
+# api to return list of popular movies
 
-    for index, row in output.iterrows():
-        _p = {
-            "original_title": row['original_title'],
-            "poster_link":row['poster_link'],
-            "release_date":row['release_date'] or "N/A",
-            "duration": row['runtime'],
-            "rating": row['weighted_rating']/2
-        }
-        popular_movie_data.append(_p)
 
-    return jsonify({
-        "data": popular_movie_data,
-        "status": "success"
-    })
 
-@app.route("/recommended_movies")
-def recommended_movies():
-    global liked_movies
-    col_names=['original_title', 'poster_link', 'release_date', 'runtime', 'weighted_rating']
-    all_recommended = pd.DataFrame(columns=col_names)
-    
-    for liked_movie in liked_movies:
-        output = get_recommendations(liked_movie["original_title"])
-        all_recommended=all_recommended.append(output)
 
-    all_recommended.drop_duplicates(subset=["original_title"],inplace=True)
+# api to return list of recommended movies
 
-    recommended_movie_data=[]
 
-    for index, row in all_recommended.iterrows():
-        _p = {
-            "original_title": row["original_title"],
-            "poster_link":row['poster_link'],
-            "release_date":row['release_date'] or "N/A",
-            "duration": row['runtime'],
-            "rating": row['weighted_rating']/2
-        }
-        recommended_movie_data.append(_p)
-
-    return jsonify({
-        "data":recommended_movie_data,
-        "status": "success"
-    })
 
 if __name__ == "__main__":
   app.run()
